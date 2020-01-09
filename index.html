@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>lazy SVG & lazy WebP</title>
+</head>
+<body>
+	
+	<picture>
+		<source data-srcset="img/webp/1.webp" type="image/webp">
+		<source data-srcset="img/1.png" type="image/png">
+		<img src="img/1-lazy.png"
+			data-src="img/1.png"
+			data-srcset="img/1@2x.png 2x"
+			alt="alt text"
+			class="lazy">
+	</picture>
+
+
+	<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYzIiBoZWlnaHQ9IjE4MiIgdmlld0JveD0iMCAwIDE2MyAxODIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNjMiIGhlaWdodD0iMTgyIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K"
+		data-src="img/IM_User.svg"
+		data-srcset="img/IM_User.svg"
+		alt="alt text"
+		class="lazy">
+		
+<script>
+    // Lazy load images
+    document.addEventListener("DOMContentLoaded", function() {
+        var lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+        var lazyBgImages = [].slice.call(document.querySelectorAll(".lazy:not(img)"));
+
+        var lazyLoad = function() {
+            lazyImages.forEach(function(lazyImage) {
+                lazyImage.src = lazyImage.getAttribute('data-src');
+                lazyImage.srcset = lazyImage.getAttribute('data-srcset');
+                lazyImage.classList.remove("lazy");
+
+                if ( lazyImage.parentNode.tagName.toLowerCase() == 'picture' ) {
+                    lazyImage.parentNode.querySelectorAll('source').forEach(function(sourceEl){
+                        sourceEl.srcset = sourceEl.getAttribute('data-srcset');
+                    });
+                }
+
+                lazyImages = lazyImages.filter(function(image) {
+                    return image !== lazyImage;
+                });
+            });
+        };
+        var lazyLoadBg = function() {
+            lazyBgImages.forEach(function(lazyBgImage) {
+                console.log(lazyBgImage, lazyBgImage.getAttribute('data-src'));
+                lazyBgImage.style.backgroundImage = 'url(' + lazyBgImage.getAttribute('data-src') + ')';
+                lazyBgImage.classList.remove("lazy");
+
+                lazyBgImages = lazyBgImages.filter(function(image) {
+                    return image !== lazyBgImage;
+                });
+            });
+        };
+
+        lazyLoad();
+        lazyLoadBg();
+    });
+</script>
+</body>
+</html>
